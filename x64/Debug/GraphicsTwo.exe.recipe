@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\GraphicsTwo.exe</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\2DPolygon_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\Blur_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\Burn_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\ColourGradient_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\Copy_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\Distort_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\2DQuad_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\GreyNoise_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\HeatHaze_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\Spiral_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\TintedTexture_ps.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\BasicTransform_vs.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\PixelLighting_ps.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\PixelLighting_vs.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\Tint_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\PostProcessingArea\Underwater_pp.cso</FullPath>
+    </ContentFile>
+  </ContentFiles>
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>

@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\PostProcessingArea.exe</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\2DPolygon_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\Blur_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\Burn_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\ColourGradient_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\Copy_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\Distort_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\2DQuad_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\GreyNoise_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\HeatHaze_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\Spiral_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\TintedTexture_ps.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\BasicTransform_vs.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\PixelLighting_ps.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\PixelLighting_vs.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\Tint_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\OneDrive - Office 365\CO3303 Maths and Tech for Games\Assignment\PostProcessingArea\PostProcessingArea\Underwater_pp.cso</FullPath>
+    </ContentFile>
+  </ContentFiles>
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>

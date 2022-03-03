@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "662ac157-c8cc-48f7-be24-855b289ded02": {
+      "ProjectGuid": "662ac157-c8cc-48f7-be24-855b289ded02",
+      "DisplayName": "PostProcessingArea",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
