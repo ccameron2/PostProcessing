@@ -37,6 +37,7 @@ enum class PostProcess
 	Gradient,
 	Blur,
 	UnderWater,
+	Retro,
 	Distort,
 	Spiral,
 	HeatHaze,
@@ -64,6 +65,9 @@ const float MOVEMENT_SPEED = 50.0f; // Units per second for movement (what a uni
 
 // Lock FPS to monitor refresh rate, which will typically set it to 60fps. Press 'p' to toggle to full fps
 bool lockFPS = true;
+
+// Flip hue increase / decrease
+bool flipHue = false;
 
 
 // Meshes, models and cameras, same meaning as TL-Engine. Meshes prepared in InitGeometry function, Models & camera in InitScene
@@ -575,6 +579,11 @@ void SelectPostProcessShaderAndTextures(PostProcess postProcess)
 	{
 		gD3DContext->PSSetShader(gHeatHazePostProcess, nullptr, 0);
 	}
+
+	else if (postProcess == PostProcess::Retro)
+	{
+		gD3DContext->PSSetShader(gRetroPostProcess, nullptr, 0);
+	}
 }
 
 
@@ -796,7 +805,7 @@ void RenderScene()
 	// Render the scene from the main camera
 	RenderSceneFromCamera(gCamera);
 
-	const std::array<CVector3, 4> Points1 = { { { -14, 5, 0 }, {-14,-5,0}, {-8,5,0}, {-8,-5,0} } }; // C++ strangely needs an extra pair of {} here... only for std:array...
+	const std::array<CVector3, 4> Points1 = { { { -14, 4, 0 }, {-14,-4,0}, {-8,4,0}, {-8,-4,0} } }; // C++ strangely needs an extra pair of {} here... only for std:array...
 	PolyPostProcess(Points1, PostProcess::Gradient, gSceneRenderTarget2, gSceneTextureSRV);
 
 	const std::array<CVector3, 4> Points2 = { { { -1, 5, 0 }, {-1,-5,0}, {-7,5,0}, {-7,-5,0} } };
@@ -806,7 +815,7 @@ void RenderScene()
 	PolyPostProcess(Points3, PostProcess::UnderWater, gSceneRenderTarget2, gSceneTextureSRV);
 
 	const std::array<CVector3, 4> Points4 = { { {8,5,0}, {8,-5,0}, { 14,5,0 }, { 14,-5,0 } } };
-	PolyPostProcess(Points4, PostProcess::Spiral, gSceneRenderTarget, gSceneTexture2SRV);
+	PolyPostProcess(Points4, PostProcess::Retro, gSceneRenderTarget, gSceneTexture2SRV);
 
 	////--------------- Scene completion ---------------////
 
@@ -888,7 +897,7 @@ void UpdateScene(float frameTime)
 	if (KeyHit(Key_1))   gCurrentPostProcessList.push_back(PostProcess::Gradient);
 	if (KeyHit(Key_2))   gCurrentPostProcessList.push_back(PostProcess::Blur);
 	if (KeyHit(Key_3))   gCurrentPostProcessList.push_back(PostProcess::UnderWater);
-	if (KeyHit(Key_4))   gCurrentPostProcessList.push_back(PostProcess::Distort);
+	if (KeyHit(Key_4))   gCurrentPostProcessList.push_back(PostProcess::Retro);
 	if (KeyHit(Key_5))   gCurrentPostProcessList.push_back(PostProcess::Spiral);
 	if (KeyHit(Key_6))   gCurrentPostProcessList.push_back(PostProcess::HeatHaze);
 	if (KeyHit(Key_9))   gCurrentPostProcessList.push_back(PostProcess::Copy);
@@ -923,11 +932,34 @@ void UpdateScene(float frameTime)
 	gPostProcessingConstants.wiggle = wiggle;
 	wiggle += wiggleSpeed * frameTime;
 
+	// Retro settings
+	const float pixelNumber = 200;
+	gPostProcessingConstants.pixelNumber = pixelNumber;
+	const float colourNumber = 10;
+	gPostProcessingConstants.colourNumber = colourNumber;
+
 	// Update heat haze timer
 	gPostProcessingConstants.heatHazeTimer += frameTime;
 
-	//***********
+	// Update underwater timer
+	gPostProcessingConstants.underwaterTimer += frameTime / 2;
 
+	// Update colour timer
+	if (gPostProcessingConstants.colourTimer > 5) { flipHue = true; }
+	if (gPostProcessingConstants.colourTimer < 1) { flipHue = false; }
+
+	// Flip hue increase / decrease
+	if (flipHue)
+	{
+		gPostProcessingConstants.colourTimer -= frameTime / 2;
+	}
+	else
+	{
+		gPostProcessingConstants.colourTimer += frameTime / 2;
+	}
+	
+
+	//***********
 
 	// Orbit one light - a bit of a cheat with the static variable [ask the tutor if you want to know what this is]
 	static float lightRotate = 0.0f;

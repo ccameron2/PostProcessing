@@ -155,6 +155,19 @@ cbuffer PostProcessingConstants : register(b1)
 
 	float  gWiggle;
 	float3 paddingG;
+    
+    // Retro post-processing settings
+	float gPixelNumber;
+    float3 paddingH;
+	float gColourNumber;
+	float3 paddingI;
+    
+    // Underwater post-process settings
+	float gUnderwaterTimer;
+	float3 paddingJ;
+    
+	float gColourTimer;
+	float3 paddingK;
 }
 
 //**************************

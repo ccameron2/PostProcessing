@@ -34,6 +34,8 @@ ID3D11PixelShader*  gUnderwaterPostProcess = nullptr;
 ID3D11PixelShader*  gDistortPostProcess    = nullptr;
 ID3D11PixelShader*  gSpiralPostProcess     = nullptr;
 ID3D11PixelShader*  gHeatHazePostProcess   = nullptr;
+ID3D11PixelShader*  gRetroPostProcess	   = nullptr;
+
 
 
 
@@ -64,14 +66,15 @@ bool LoadShaders()
 	gDistortPostProcess    = LoadPixelShader ("Distort_pp");
 	gSpiralPostProcess     = LoadPixelShader ("Spiral_pp");
 	gHeatHazePostProcess   = LoadPixelShader ("HeatHaze_pp");
+	gRetroPostProcess	   = LoadPixelShader("Retro_pp");
 
 	if (gBasicTransformVertexShader == nullptr || gPixelLightingVertexShader == nullptr ||
 		gTintedTexturePixelShader   == nullptr || gPixelLightingPixelShader  == nullptr ||
 		g2DQuadVertexShader         == nullptr || gCopyPostProcess           == nullptr ||
 		gGradPostProcess            == nullptr || gHeatHazePostProcess       == nullptr ||
-		gBlurPostProcess       == nullptr || gUnderwaterPostProcess           == nullptr ||
+		gBlurPostProcess			== nullptr || gUnderwaterPostProcess     == nullptr ||
 		gDistortPostProcess         == nullptr || gSpiralPostProcess         == nullptr ||
-		g2DPolygonVertexShader      == nullptr)
+		g2DPolygonVertexShader      == nullptr || gRetroPostProcess			 == nullptr)
 	{
 		gLastError = "Error loading shaders";
 		return false;
@@ -86,9 +89,10 @@ void ReleaseShaders()
 	if (gHeatHazePostProcess)         gHeatHazePostProcess       ->Release();
 	if (gSpiralPostProcess)           gSpiralPostProcess         ->Release();
 	if (gDistortPostProcess)          gDistortPostProcess        ->Release();
-	if (gUnderwaterPostProcess)             gUnderwaterPostProcess           ->Release();
-	if (gBlurPostProcess)        gBlurPostProcess      ->Release();
+	if (gUnderwaterPostProcess)       gUnderwaterPostProcess     ->Release();
+	if (gBlurPostProcess)			  gBlurPostProcess			 ->Release();
 	if (gGradPostProcess)             gGradPostProcess           ->Release();
+	if (gRetroPostProcess)			  gRetroPostProcess			 ->Release();
 	if (gCopyPostProcess)             gCopyPostProcess           ->Release();
 	if (g2DPolygonVertexShader)       g2DPolygonVertexShader     ->Release();
 	if (g2DQuadVertexShader)          g2DQuadVertexShader        ->Release();
@@ -96,6 +100,7 @@ void ReleaseShaders()
 	if (gTintedTexturePixelShader)    gTintedTexturePixelShader  ->Release();
 	if (gPixelLightingVertexShader)   gPixelLightingVertexShader ->Release();
 	if (gBasicTransformVertexShader)  gBasicTransformVertexShader->Release();
+
 }
 
 

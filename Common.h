@@ -144,6 +144,21 @@ struct PostProcessingConstants
 
 	float	 wiggle;
 	CVector3 paddingG;
+
+	// Retro post-processing settings
+	float pixelNumber;
+	CVector3 paddingH;
+	float colourNumber;
+	CVector3 paddingI;
+
+	// Underwater post-process settings
+	float underwaterTimer;
+	CVector3 paddingJ;
+
+	// Underwater post-process settings
+	float colourTimer;
+	CVector3 paddingK;
+
 };
 extern PostProcessingConstants gPostProcessingConstants;      // This variable holds the CPU-side constant buffer described above
 extern ID3D11Buffer*           gPostProcessingConstantBuffer; // This variable controls the GPU-side constant buffer related to the above structure
