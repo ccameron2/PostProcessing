@@ -63,7 +63,7 @@ struct PostProcessingInput
 struct PixelShaderOutput
 {
 	float4 colour : SV_Target0;
-	float4 bloom : SV_Target1;
+	float4 distance : SV_Target1;
 };
 
 
@@ -175,6 +175,12 @@ cbuffer PostProcessingConstants : register(b1)
     // Timer to change hue
 	float gColourTimer;
 	float3 paddingK;
+    
+    // Depth of field settings
+	float gMax;
+	float3 paddingL;
+	float gMin;
+	float3 paddingM;
 }
 
 //**************************

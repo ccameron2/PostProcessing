@@ -159,6 +159,12 @@ struct PostProcessingConstants
 	float colourTimer;
 	CVector3 paddingK;
 
+	// Depth of field settings
+	float max;
+	CVector3 paddingL;
+	float min;
+	CVector3 paddingM;
+
 };
 extern PostProcessingConstants gPostProcessingConstants;      // This variable holds the CPU-side constant buffer described above
 extern ID3D11Buffer*           gPostProcessingConstantBuffer; // This variable controls the GPU-side constant buffer related to the above structure

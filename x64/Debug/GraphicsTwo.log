@@ -1,6 +1,4 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(514,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (PostProcessingArea.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-C:\Users\CCame\source\repos\GraphicsTwo\BloomTexture_pp.hlsl(33,3-45): warning X3206: implicit truncation of vector type
-C:\Users\CCame\source\repos\GraphicsTwo\BloomTexture_pp.hlsl(37,3-37): warning X3206: implicit truncation of vector type
-  
-  compilation object save succeeded; see C:\Users\CCame\source\repos\GraphicsTwo\BloomTexture_pp.cso
+  compilation object save succeeded; see C:\Users\CCame\source\repos\GraphicsTwo\DepthOfField_pp.cso
+  Scene.cpp
   GraphicsTwo.vcxproj -> C:\Users\CCame\source\repos\GraphicsTwo\GraphicsTwo.exe

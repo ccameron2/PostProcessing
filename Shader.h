@@ -38,6 +38,7 @@ extern ID3D11PixelShader* gGaussianHoriPostProcess;
 extern ID3D11PixelShader* gInvertPostProcess;
 extern ID3D11PixelShader* gBloomPostProcess;
 extern ID3D11PixelShader* gBloomTexturePostProcess;
+extern ID3D11PixelShader* gDepthPostProcess;
 
 
 

@@ -19,6 +19,10 @@ SamplerState PointSample  : register(s0); // We don't usually want to filter (bi
 Texture2D BloomMap : register(t1);
 SamplerState TrilinearWrap : register(s1);
 
+// This shader also uses a star texture
+Texture2D StarTexture : register(t2);
+
+
 //--------------------------------------------------------------------------------------
 // Shader code
 //--------------------------------------------------------------------------------------
@@ -32,16 +36,16 @@ float4 main(PostProcessingInput input) : SV_Target
 	// Sample a pixel from the bloom map created in the lighting pixel shader
 	float3 bloomColour = BloomMap.Sample(TrilinearWrap, input.sceneUV).rgb;
 	
-	//Uncomment to see bloom map acting on scene more clearly
-	//Comment additive blending underneath
+	float3 starColour = StarTexture.Sample(TrilinearWrap, input.sceneUV).rgb;
 	
-	//if (bloomColour.r > 0 && bloomColour.g > 0 && bloomColour.b > 0)
+	//if (bloomColour.r != 0 && bloomColour.g != 0 && bloomColour.b != 0)
 	//{
-	//	finalColour *= bloomColour;
+	//	finalColour += starColour;
 	//}
 	
 	//Additive blending
 	finalColour += bloomColour;
+
 	
 	// Got the RGB from the scene texture, set alpha to 1 for final output
 	return float4(finalColour, 1.0f);

@@ -17,16 +17,15 @@
 Texture2D DiffuseSpecularMap : register(t0); // Textures here can contain a diffuse map (main colour) in their rgb channels and a specular map (shininess) in the a channel
 SamplerState TexSampler      : register(s0); // A sampler is a filter for a texture like bilinear, trilinear or anisotropic - this is the sampler used for the texture above
 
-
 //--------------------------------------------------------------------------------------
 // Shader code
 //--------------------------------------------------------------------------------------
 
 // Pixel shader entry point - each shader has a "main" function
 // This shader just samples a diffuse texture map
-float4 main(LightingPixelShaderInput input) : SV_Target
+PixelShaderOutput main(LightingPixelShaderInput input) : SV_Target
 {
-    
+	PixelShaderOutput output;
     // Normal might have been scaled by model scaling or interpolation so renormalise
     input.worldNormal = normalize(input.worldNormal); 
 
@@ -73,19 +72,27 @@ float4 main(LightingPixelShaderInput input) : SV_Target
     // Combine lighting with texture colours
     float3 finalColour = diffuseLight * diffuseMaterialColour + specularLight * specularMaterialColour;
     
-    //// Extract bright parts of the map to blur
-	//float brightness = dot(finalColour, float3(0.6126, 0.8152, 0.4222));
-    
-	//if (brightness > 1.0f)
-	//{
-	//	output.bloom = float4(finalColour.rgb, 1.0f);
-	//}
-	//else
-	//{
-	//	output.bloom = float4(0, 0, 0, 1.0f);
-	//}
-    
-	//output.colour = float4(finalColour, 1.0f);
+	float imageDistance = 2;
+	
+    // Build Distance Map
+	float Distance = distance(gCameraPosition, input.worldPosition);
+	
+	if (Distance > 40.0f && Distance < 100.0f)
+	{
+		// Scale distance to range 0->1 and store in alpha
+		output.distance = float4(0,0,0, (Distance - 40.0f) / (100.0f - 40.0f));
+	}
+	else if (Distance > 100.0f)
+	{
+		output.distance = float4(0, 0, 0, 1.0f);
+	}
+	else
+	{
+		output.distance = float4(0, 0, 0, 0.0f);
 
-	return float4(finalColour, 1.0f);
+	}
+    
+	output.colour = float4(finalColour, 1.0f);
+
+	return output;
 }

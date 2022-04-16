@@ -38,8 +38,10 @@ ID3D11PixelShader*  gRetroPostProcess	    = nullptr;
 ID3D11PixelShader* gGaussianVertPostProcess = nullptr;
 ID3D11PixelShader* gGaussianHoriPostProcess = nullptr;
 ID3D11PixelShader* gInvertPostProcess		= nullptr;
-ID3D11PixelShader* gBloomPostProcess = nullptr;
+ID3D11PixelShader* gBloomPostProcess		= nullptr;
 ID3D11PixelShader* gBloomTexturePostProcess = nullptr;
+ID3D11PixelShader* gDepthPostProcess		= nullptr;
+
 
 
 
@@ -77,6 +79,7 @@ bool LoadShaders()
 	gInvertPostProcess		 = LoadPixelShader("Invert_pp");
 	gBloomPostProcess		 = LoadPixelShader("Bloom_pp");
 	gBloomTexturePostProcess = LoadPixelShader("BloomTexture_pp");
+	gDepthPostProcess		 = LoadPixelShader("DepthOfField_pp");
 
 	if (gBasicTransformVertexShader == nullptr || gPixelLightingVertexShader == nullptr ||
 		gTintedTexturePixelShader   == nullptr || gPixelLightingPixelShader  == nullptr ||
@@ -87,7 +90,7 @@ bool LoadShaders()
 		g2DPolygonVertexShader      == nullptr || gRetroPostProcess			 == nullptr ||
 		gGaussianVertPostProcess    == nullptr || gGaussianHoriPostProcess   == nullptr ||
 		gInvertPostProcess			== nullptr || gBloomPostProcess			 == nullptr ||
-		gBloomTexturePostProcess == nullptr
+		gBloomTexturePostProcess	== nullptr || gDepthPostProcess			 == nullptr
 		)
 	{
 		gLastError = "Error loading shaders";
@@ -119,6 +122,8 @@ void ReleaseShaders()
 	if (gInvertPostProcess)			  gInvertPostProcess->Release();
 	if (gBloomPostProcess)			  gBloomPostProcess->Release();
 	if (gBloomTexturePostProcess)	  gBloomTexturePostProcess->Release();
+	if (gDepthPostProcess)			  gDepthPostProcess->Release();
+
 }
 
 

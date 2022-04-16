@@ -30,10 +30,12 @@ float4 main(PostProcessingInput input) : SV_Target
     
 	if (brightness > 1.0f)
 	{
+		// Return texture colour
 		finalColour = float4(finalColour.rgb, 1.0f);
 	}
 	else
 	{
+		// Return black
 		finalColour = float4(0, 0, 0, 1.0f);
 	}
 	

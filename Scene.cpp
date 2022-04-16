@@ -45,7 +45,8 @@ enum class PostProcess
 	HeatHaze,
 	Invert,
 	Bloom,
-	BloomTexture
+	BloomTexture,
+	DepthOfField
 };
 
 enum class PostProcessMode
@@ -61,6 +62,9 @@ auto gCurrentPostProcessMode = PostProcessMode::Fullscreen;
 std::vector<PostProcess> gCurrentPostProcessList;
 
 float zShift = 12.0f;
+bool DepthOfField = false;
+float DepthMax = 0.8f;
+float DepthMin = 0.2f;
 //********************
 
 
@@ -179,6 +183,21 @@ ID3D11Texture2D* gBloomBlurTexture = nullptr; // This object represents the memo
 ID3D11RenderTargetView* gBloomBlurRenderTarget = nullptr; // This object is used when we want to render to the texture above
 ID3D11ShaderResourceView* gBloomBlurTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
 
+// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
+ID3D11Texture2D* gDistanceTexture = nullptr; // This object represents the memory used by the texture on the GPU
+ID3D11RenderTargetView* gDistanceRenderTarget = nullptr; // This object is used when we want to render to the texture above
+ID3D11ShaderResourceView* gDistanceTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+
+// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
+ID3D11Texture2D* gDepthBlurTexture = nullptr; // This object represents the memory used by the texture on the GPU
+ID3D11RenderTargetView* gDepthBlurRenderTarget = nullptr; // This object is used when we want to render to the texture above
+ID3D11ShaderResourceView* gDepthBlurTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+
+// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
+ID3D11Texture2D* gDepthBlurTexture2 = nullptr; // This object represents the memory used by the texture on the GPU
+ID3D11RenderTargetView* gDepthBlurRenderTarget2 = nullptr; // This object is used when we want to render to the texture above
+ID3D11ShaderResourceView* gDepthBlurTexture2SRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+
 ID3D11RenderTargetView* gRenderViews[2];
 
 // Additional textures used for specific post-processes
@@ -188,6 +207,8 @@ ID3D11Resource*           gBurnMap = nullptr;
 ID3D11ShaderResourceView* gBurnMapSRV = nullptr;
 ID3D11Resource*           gDistortMap = nullptr;
 ID3D11ShaderResourceView* gDistortMapSRV = nullptr;
+ID3D11Resource*			  gStarTex = nullptr;
+ID3D11ShaderResourceView* gStarTexSRV = nullptr;
 
 
 //****************************
@@ -235,7 +256,8 @@ bool InitGeometry()
 		!LoadTexture("Noise.png",                &gNoiseMap,   &gNoiseMapSRV) ||
 		!LoadTexture("Burn.png",                 &gBurnMap,    &gBurnMapSRV) ||
 		!LoadTexture("Distort.png",              &gDistortMap, &gDistortMapSRV)||
-		!LoadTexture("brick_35.jpg",			 &gBrickDiffuseSpecularMap,   &gBrickDiffuseSpecularMapSRV))
+		!LoadTexture("brick_35.jpg",			 &gBrickDiffuseSpecularMap,   &gBrickDiffuseSpecularMapSRV) || 
+		!LoadTexture("Flare.jpg",			     &gStarTex, &gStarTexSRV))
 	{
 		gLastError = "Error loading textures";
 		return false;
@@ -313,6 +335,21 @@ bool InitGeometry()
 		gLastError = "Error creating scene texture";
 		return false;
 	}
+	if (FAILED(gD3DDevice->CreateTexture2D(&sceneTextureDesc, NULL, &gDistanceTexture)))
+	{
+		gLastError = "Error creating scene texture";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateTexture2D(&sceneTextureDesc, NULL, &gDepthBlurTexture)))
+	{
+		gLastError = "Error creating scene texture";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateTexture2D(&sceneTextureDesc, NULL, &gDepthBlurTexture2)))
+	{
+		gLastError = "Error creating scene texture";
+		return false;
+	}
 
 
 
@@ -337,6 +374,21 @@ bool InitGeometry()
 	}
 
 	if (FAILED(gD3DDevice->CreateRenderTargetView(gBloomBlurTexture, NULL, &gBloomBlurRenderTarget)))
+	{
+		gLastError = "Error creating scene render target view";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateRenderTargetView(gDistanceTexture, NULL, &gDistanceRenderTarget)))
+	{
+		gLastError = "Error creating scene render target view";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateRenderTargetView(gDepthBlurTexture, NULL, &gDepthBlurRenderTarget)))
+	{
+		gLastError = "Error creating scene render target view";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateRenderTargetView(gDepthBlurTexture2, NULL, &gDepthBlurRenderTarget2)))
 	{
 		gLastError = "Error creating scene render target view";
 		return false;
@@ -369,9 +421,24 @@ bool InitGeometry()
 		gLastError = "Error creating scene shader resource view";
 		return false;
 	}
+	if (FAILED(gD3DDevice->CreateShaderResourceView(gDistanceTexture, &srDesc, &gDistanceTextureSRV)))
+	{
+		gLastError = "Error creating scene shader resource view";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateShaderResourceView(gDepthBlurTexture, &srDesc, &gDepthBlurTextureSRV)))
+	{
+		gLastError = "Error creating scene shader resource view";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateShaderResourceView(gDepthBlurTexture2, &srDesc, &gDepthBlurTexture2SRV)))
+	{
+		gLastError = "Error creating scene shader resource view";
+		return false;
+	}
 
 	gRenderViews[0] = gSceneRenderTarget;
-	gRenderViews[1] = gBloomRenderTarget;
+	gRenderViews[1] = gDistanceRenderTarget;
 
 	return true;
 }
@@ -522,6 +589,8 @@ void RenderSceneFromCamera(Camera* camera)
 	gD3DContext->OMSetDepthStencilState(gUseDepthBufferState, 0);
 	gD3DContext->RSSetState(gCullBackState);
 
+	gD3DContext->OMSetRenderTargets(2, &gRenderViews[0], gDepthStencil);
+
 	// Render lit models, only change textures for each onee
 	gD3DContext->PSSetSamplers(0, 1, &gAnisotropic4xSampler);
 
@@ -649,10 +718,18 @@ void SelectPostProcessShaderAndTextures(PostProcess postProcess)
 		gD3DContext->PSSetShader(gBloomPostProcess, nullptr, 0);
 		gD3DContext->PSSetShaderResources(1, 1, &gBloomTextureSRV);
 		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
+		gD3DContext->PSSetShaderResources(2, 1, &gStarTexSRV);
 	}
 	else if (postProcess == PostProcess::BloomTexture)
 	{
 		gD3DContext->PSSetShader(gBloomTexturePostProcess, nullptr, 0);
+	}
+	else if (postProcess == PostProcess::DepthOfField)
+	{
+		gD3DContext->PSSetShader(gDepthPostProcess, nullptr, 0);
+		gD3DContext->PSSetShaderResources(1, 1, &gDepthBlurTextureSRV);
+		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
+		gD3DContext->PSSetShaderResources(2, 1, &gDistanceTextureSRV);
 	}
 }
 
@@ -750,8 +827,6 @@ void AreaPostProcess(PostProcess postProcess, CVector3 worldPoint, CVector2 area
 	// Again convert the result in pixels to a result to 0->1 coordinates
 	area2DSize.x /= gViewportWidth;
 	area2DSize.y /= gViewportHeight;
-
-
 
 	// Send the area top-left and size into the constant buffer - the 2DQuad vertex shader will use this to create a quad in the right place
 	gPostProcessingConstants.area2DTopLeft = area2DCentre - 0.5f * area2DSize; // Top-left of area is centre - half the size
@@ -881,7 +956,26 @@ void RenderScene()
 
 	////--------------- Scene completion ---------------////
 
-	// Run any post-processing steps
+	if (DepthOfField)
+	{
+		FullScreenPostProcess(PostProcess::Copy, gSceneRenderTarget2, gSceneTextureSRV);
+		FullScreenPostProcess(PostProcess::BlurHori, gDepthBlurRenderTarget, gSceneTexture2SRV);
+		FullScreenPostProcess(PostProcess::BlurVert, gDepthBlurRenderTarget2, gDepthBlurTextureSRV);
+		FullScreenPostProcess(PostProcess::DepthOfField, gSceneRenderTarget, gSceneTexture2SRV);
+	}
+
+	// Apply bloom
+
+	// Extract bloom texture
+	FullScreenPostProcess(PostProcess::BloomTexture, gBloomRenderTarget, gSceneTextureSRV);
+	// Guassian blur brightness texture horizontally
+	FullScreenPostProcess(PostProcess::BlurHori, gBloomBlurRenderTarget, gBloomTextureSRV);
+	// Guassian blur brightness texture Vertically
+	FullScreenPostProcess(PostProcess::BlurVert, gBloomRenderTarget, gBloomBlurTextureSRV);
+	// Blend the texture with 
+	FullScreenPostProcess(PostProcess::Bloom, gSceneRenderTarget2, gSceneTextureSRV);
+
+	// Run any other post-processing steps
 	if (gCurrentPostProcessList.size() > 0)
 	{	
 			if (gCurrentPostProcessMode == PostProcessMode::Fullscreen)
@@ -893,34 +987,33 @@ void RenderScene()
 					// These lines unbind the scene texture from the pixel shader to stop DirectX issuing a warning when we try to render to it again next frame
 					ID3D11ShaderResourceView* nullSRV = nullptr;
 					gD3DContext->PSSetShaderResources(0, 1, &nullSRV);
+					gD3DContext->PSSetShaderResources(1, 1, &nullSRV);
+					gD3DContext->PSSetShaderResources(2, 1, &nullSRV);
 
 					gCurrentPostProcess = gCurrentPostProcessList[i];
 
-					if (gCurrentPostProcess == PostProcess::Bloom)
-					{
-						FullScreenPostProcess(PostProcess::BloomTexture, gBloomRenderTarget, gSceneTextureSRV);
-						FullScreenPostProcess(PostProcess::BlurHori, gBloomBlurRenderTarget, gBloomTextureSRV);
-						FullScreenPostProcess(PostProcess::BlurVert, gBloomRenderTarget, gBloomBlurTextureSRV);
-						FullScreenPostProcess(PostProcess::Bloom, gBackBufferRenderTarget, gSceneTextureSRV);
-					}
+					// If the last post process
 					if (i == listSize - 1)
 					{
+						// Render the correct scene texture to back buffer
 						if (listSize % 2 == 0)
-						{
-							FullScreenPostProcess(gCurrentPostProcess, gBackBufferRenderTarget, gSceneTexture2SRV);
-						}
-						else
 						{
 							FullScreenPostProcess(gCurrentPostProcess, gBackBufferRenderTarget, gSceneTextureSRV);
 						}
+						else
+						{
+							FullScreenPostProcess(gCurrentPostProcess, gBackBufferRenderTarget, gSceneTexture2SRV);
+						}
 					}
+
+					// Alternate through render targets based on odd/even
 					if (i % 2 == 0)
 					{
-						FullScreenPostProcess(gCurrentPostProcess, gSceneRenderTarget2, gSceneTextureSRV);
+						FullScreenPostProcess(gCurrentPostProcess, gSceneRenderTarget, gSceneTexture2SRV);
 					}
 					else
 					{
-						FullScreenPostProcess(gCurrentPostProcess, gSceneRenderTarget, gSceneTexture2SRV);
+						FullScreenPostProcess(gCurrentPostProcess, gSceneRenderTarget2, gSceneTextureSRV);
 					}
 					
 				}
@@ -935,12 +1028,14 @@ void RenderScene()
 	}
 	else
 	{
-		FullScreenPostProcess(PostProcess::Copy, gBackBufferRenderTarget, gSceneTextureSRV);
+		FullScreenPostProcess(PostProcess::Copy, gBackBufferRenderTarget, gSceneTexture2SRV);
 	}
 
 	// These lines unbind the scene texture from the pixel shader to stop DirectX issuing a warning when we try to render to it again next frame
 	ID3D11ShaderResourceView* nullSRV = nullptr;
 	gD3DContext->PSSetShaderResources(0, 1, &nullSRV);
+	gD3DContext->PSSetShaderResources(1, 1, &nullSRV);
+	gD3DContext->PSSetShaderResources(2, 1, &nullSRV);
 
 	// When drawing to the off-screen back buffer is complete, we "present" the image to the front buffer (the screen)
 	// Set first parameter to 1 to lock to vsync
@@ -967,13 +1062,14 @@ void UpdateScene(float frameTime)
 	if (KeyHit(Key_1))   gCurrentPostProcessList.push_back(PostProcess::Gradient);
 	if (KeyHit(Key_2)) { gCurrentPostProcessList.push_back(PostProcess::BlurHori); gCurrentPostProcessList.push_back(PostProcess::BlurVert); }
 	if (KeyHit(Key_3))   gCurrentPostProcessList.push_back(PostProcess::UnderWater);
-	if (KeyHit(Key_4))   gCurrentPostProcessList.push_back(PostProcess::Retro);
-	if (KeyHit(Key_5))   gCurrentPostProcessList.push_back(PostProcess::Spiral);
-	if (KeyHit(Key_6))   gCurrentPostProcessList.push_back(PostProcess::Bloom);
-	if (KeyHit(Key_9))   gCurrentPostProcessList.push_back(PostProcess::Invert);
+	if (KeyHit(Key_4))   if (DepthOfField) { DepthOfField = false; } else {DepthOfField = true;}
+	if (KeyHit(Key_5))   gCurrentPostProcessList.push_back(PostProcess::Retro);
+	if (KeyHit(Key_6))   gCurrentPostProcessList.push_back(PostProcess::Invert);
 	if (KeyHit(Key_0))   gCurrentPostProcessList.clear();
-	if (KeyHit(Key_7))	 zShift -= 1.0f;
-	if (KeyHit(Key_8))	 zShift += 1.0f;
+	if (KeyHit(Key_7))	 DepthMax += 0.1f;
+	if (KeyHit(Key_8))	 DepthMin += 0.1f;
+	if (KeyHit(Key_U))	 DepthMax -= 0.1f;
+	if (KeyHit(Key_I))	 DepthMin -= 0.1f;
 	if (KeyHit(Key_Minus))	 if(gCurrentPostProcessList.size() > 0) gCurrentPostProcessList.pop_back();
 
 	// Post processing settings - all data for post-processes is updated every frame whether in use or not (minimal cost)
@@ -1028,6 +1124,9 @@ void UpdateScene(float frameTime)
 		gPostProcessingConstants.colourTimer += frameTime / 2;
 	}
 	
+	// Set user controlled depth max and min
+	gPostProcessingConstants.max = DepthMax;
+	gPostProcessingConstants.min = DepthMin;
 
 	//***********
 
