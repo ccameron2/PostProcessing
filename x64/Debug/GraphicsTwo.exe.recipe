@@ -10,6 +10,9 @@
       <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\2DPolygon_pp.cso</FullPath>
     </ContentFile>
     <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\Bloom.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
       <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\Blur_pp.cso</FullPath>
     </ContentFile>
     <ContentFile>
@@ -26,6 +29,12 @@
     </ContentFile>
     <ContentFile>
       <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\2DQuad_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\GaussHori_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\GaussVert_pp.cso</FullPath>
     </ContentFile>
     <ContentFile>
       <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\GreyNoise_pp.cso</FullPath>

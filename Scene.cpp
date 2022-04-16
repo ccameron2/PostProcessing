@@ -36,6 +36,8 @@ enum class PostProcess
 	Copy,
 	Gradient,
 	Blur,
+	BlurVert,
+	BlurHori,
 	UnderWater,
 	Retro,
 	Distort,
@@ -543,12 +545,24 @@ void SelectPostProcessShaderAndTextures(PostProcess postProcess)
 		gD3DContext->PSSetShader(gGradPostProcess, nullptr, 0);
 	}
 
+	else if (postProcess == PostProcess::BlurVert)
+	{
+		gD3DContext->PSSetShader(gGaussianVertPostProcess, nullptr, 0);
+
+		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
+	}
+
 	else if (postProcess == PostProcess::Blur)
 	{
 		gD3DContext->PSSetShader(gBlurPostProcess, nullptr, 0);
 
-		// Give pixel shader access to the noise texture
-		gD3DContext->PSSetShaderResources(1, 1, &gNoiseMapSRV);
+		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
+	}
+
+	else if (postProcess == PostProcess::BlurHori)
+	{
+		gD3DContext->PSSetShader(gGaussianHoriPostProcess, nullptr, 0);
+
 		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
 	}
 
@@ -556,8 +570,6 @@ void SelectPostProcessShaderAndTextures(PostProcess postProcess)
 	{
 		gD3DContext->PSSetShader(gUnderwaterPostProcess, nullptr, 0);
 
-		// Give pixel shader access to the burn texture (basically a height map that the burn level ascends)
-		gD3DContext->PSSetShaderResources(1, 1, &gBurnMapSRV);
 		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
 	}
 
@@ -779,15 +791,7 @@ void RenderScene()
 	// Set the target for rendering and select the main depth buffer.
 	// If using post-processing then render to the scene texture, otherwise to the usual back buffer
 	// Also clear the render target to a fixed colour and the depth buffer to the far distance
-	//if (gCurrentPostProcessList.size() >  0)
-	//{
-	//	
-	//}
-	//else
-	//{
-	//	gD3DContext->OMSetRenderTargets(1, &gBackBufferRenderTarget, gDepthStencil);
-	//	gD3DContext->ClearRenderTargetView(gBackBufferRenderTarget, &gBackgroundColor.r);
-	//}
+
 	gD3DContext->OMSetRenderTargets(1, &gSceneRenderTarget, gDepthStencil);
 	gD3DContext->ClearRenderTargetView(gSceneRenderTarget, &gBackgroundColor.r);
 	gD3DContext->ClearDepthStencilView(gDepthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -811,7 +815,7 @@ void RenderScene()
 	const std::array<CVector3, 4> Points2 = { { { -1, 5, 0 }, {-1,-5,0}, {-7,5,0}, {-7,-5,0} } };
 	PolyPostProcess(Points2, PostProcess::HeatHaze, gSceneRenderTarget, gSceneTexture2SRV);
 
-	const std::array<CVector3, 4> Points3 = { { { 1, 5, 0 }, {1,-5,0}, {7,5,0}, {7,-5,0} } };
+	const std::array<CVector3, 4> Points3 = { { { 0, 5, 0 }, {0,-5,0}, {7,5,0}, {7,-5,0} } };
 	PolyPostProcess(Points3, PostProcess::UnderWater, gSceneRenderTarget2, gSceneTextureSRV);
 
 	const std::array<CVector3, 4> Points4 = { { {8,5,0}, {8,-5,0}, { 14,5,0 }, { 14,-5,0 } } };
@@ -821,8 +825,7 @@ void RenderScene()
 
 	// Run any post-processing steps
 	if (gCurrentPostProcessList.size() > 0)
-	{
-		
+	{	
 			if (gCurrentPostProcessMode == PostProcessMode::Fullscreen)
 			{
 				auto listSize = gCurrentPostProcessList.size();
@@ -895,7 +898,7 @@ void UpdateScene(float frameTime)
 	if (KeyHit(Key_F3))  gCurrentPostProcessMode = PostProcessMode::Polygon;
 
 	if (KeyHit(Key_1))   gCurrentPostProcessList.push_back(PostProcess::Gradient);
-	if (KeyHit(Key_2))   gCurrentPostProcessList.push_back(PostProcess::Blur);
+	if (KeyHit(Key_2)) { gCurrentPostProcessList.push_back(PostProcess::BlurHori); gCurrentPostProcessList.push_back(PostProcess::BlurVert); }
 	if (KeyHit(Key_3))   gCurrentPostProcessList.push_back(PostProcess::UnderWater);
 	if (KeyHit(Key_4))   gCurrentPostProcessList.push_back(PostProcess::Retro);
 	if (KeyHit(Key_5))   gCurrentPostProcessList.push_back(PostProcess::Spiral);
