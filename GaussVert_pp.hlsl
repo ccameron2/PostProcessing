@@ -37,5 +37,5 @@ float4 main(PostProcessingInput input) : SV_Target
 		colour += SceneTexture.Sample(PointSample, (input.sceneUV - float2(0, offset[i]) / gViewportHeight)) * weight[i];
 	}
 	
-	return float4(colour, 1);
+	return float4(colour, 0.1f);
 }

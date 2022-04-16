@@ -167,37 +167,38 @@ ID3D11ShaderResourceView* gLightDiffuseMapSRV = nullptr;
 ID3D11Texture2D*          gSceneTexture      = nullptr; // This object represents the memory used by the texture on the GPU
 ID3D11RenderTargetView*   gSceneRenderTarget = nullptr; // This object is used when we want to render to the texture above
 ID3D11ShaderResourceView* gSceneTextureSRV   = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+ 
+// Second scene texture to combine effects
+ID3D11Texture2D* gSceneTexture2 = nullptr;
+ID3D11RenderTargetView* gSceneRenderTarget2 = nullptr;
+ID3D11ShaderResourceView* gSceneTexture2SRV = nullptr;
 
-// This texture will have the scene renderered on it. Then the texture is then used for post-processing
-ID3D11Texture2D* gSceneTexture2 = nullptr; // This object represents the memory used by the texture on the GPU
-ID3D11RenderTargetView* gSceneRenderTarget2 = nullptr; // This object is used when we want to render to the texture above
-ID3D11ShaderResourceView* gSceneTexture2SRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+// Texture to hold bright parts of image
+ID3D11Texture2D* gBloomTexture = nullptr;
+ID3D11RenderTargetView* gBloomRenderTarget = nullptr;
+ID3D11ShaderResourceView* gBloomTextureSRV = nullptr;
 
-// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
-ID3D11Texture2D* gBloomTexture = nullptr; // This object represents the memory used by the texture on the GPU
-ID3D11RenderTargetView* gBloomRenderTarget = nullptr; // This object is used when we want to render to the texture above
-ID3D11ShaderResourceView* gBloomTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+// Texture to blur bright parts of image
+ID3D11Texture2D* gBloomBlurTexture = nullptr;
+ID3D11RenderTargetView* gBloomBlurRenderTarget = nullptr;
+ID3D11ShaderResourceView* gBloomBlurTextureSRV = nullptr;
 
-// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
-ID3D11Texture2D* gBloomBlurTexture = nullptr; // This object represents the memory used by the texture on the GPU
-ID3D11RenderTargetView* gBloomBlurRenderTarget = nullptr; // This object is used when we want to render to the texture above
-ID3D11ShaderResourceView* gBloomBlurTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+// Texture to represent distance in alpha channel
+ID3D11Texture2D* gDistanceTexture = nullptr; 
+ID3D11RenderTargetView* gDistanceRenderTarget = nullptr; 
+ID3D11ShaderResourceView* gDistanceTextureSRV = nullptr; 
 
-// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
-ID3D11Texture2D* gDistanceTexture = nullptr; // This object represents the memory used by the texture on the GPU
-ID3D11RenderTargetView* gDistanceRenderTarget = nullptr; // This object is used when we want to render to the texture above
-ID3D11ShaderResourceView* gDistanceTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+// Texture to blur scene texture into to then use in depth of field
+ID3D11Texture2D* gDepthBlurTexture = nullptr;
+ID3D11RenderTargetView* gDepthBlurRenderTarget = nullptr;
+ID3D11ShaderResourceView* gDepthBlurTextureSRV = nullptr;
 
-// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
-ID3D11Texture2D* gDepthBlurTexture = nullptr; // This object represents the memory used by the texture on the GPU
-ID3D11RenderTargetView* gDepthBlurRenderTarget = nullptr; // This object is used when we want to render to the texture above
-ID3D11ShaderResourceView* gDepthBlurTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+// Texture for second blur pass
+ID3D11Texture2D* gDepthBlurTexture2 = nullptr; 
+ID3D11RenderTargetView* gDepthBlurRenderTarget2 = nullptr; 
+ID3D11ShaderResourceView* gDepthBlurTexture2SRV = nullptr; 
 
-// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
-ID3D11Texture2D* gDepthBlurTexture2 = nullptr; // This object represents the memory used by the texture on the GPU
-ID3D11RenderTargetView* gDepthBlurRenderTarget2 = nullptr; // This object is used when we want to render to the texture above
-ID3D11ShaderResourceView* gDepthBlurTexture2SRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
-
+// Render targets for pixel shader to use
 ID3D11RenderTargetView* gRenderViews[2];
 
 // Additional textures used for specific post-processes
@@ -666,7 +667,14 @@ void SelectPostProcessShaderAndTextures(PostProcess postProcess)
 
 	else if (postProcess == PostProcess::BlurVert)
 	{
+		gD3DContext->OMSetBlendState(gAlphaBlendingState, nullptr, 0xffffff);
 		gD3DContext->PSSetShader(gGaussianVertPostProcess, nullptr, 0);
+	}
+
+	else if (postProcess == PostProcess::BlurHori)
+	{
+		gD3DContext->OMSetBlendState(gAlphaBlendingState, nullptr, 0xffffff);
+		gD3DContext->PSSetShader(gGaussianHoriPostProcess, nullptr, 0);
 	}
 
 	else if (postProcess == PostProcess::Blur)
@@ -677,11 +685,6 @@ void SelectPostProcessShaderAndTextures(PostProcess postProcess)
 	else if (postProcess == PostProcess::Invert)
 	{
 		gD3DContext->PSSetShader(gInvertPostProcess, nullptr, 0);
-	}
-
-	else if (postProcess == PostProcess::BlurHori)
-	{
-		gD3DContext->PSSetShader(gGaussianHoriPostProcess, nullptr, 0);
 	}
 
 	else if (postProcess == PostProcess::UnderWater)

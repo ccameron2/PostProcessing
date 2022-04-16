@@ -26,7 +26,7 @@ float4 main(PostProcessingInput input) : SV_Target
 	float3 finalColour = SceneTexture.Sample(PointSample, input.sceneUV).rgb;
 	
 	// Extract bright parts of the map to blur
-	float brightness = dot(finalColour, float3(0.6126, 0.8152, 0.4222));
+	float brightness = dot(finalColour, float3(0.4126, 0.8152, 0.1222));
     
 	if (brightness > 1.0f)
 	{
