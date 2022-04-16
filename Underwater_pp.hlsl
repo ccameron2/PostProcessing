@@ -25,20 +25,19 @@ float4 main(PostProcessingInput input) : SV_Target
 {
 	const float effectStrength = 0.005f;
 	
+	// Colour to tint the screen
 	float3 oceanBlue = { 0, 0.4, 0.6 };
-	//// Sample a pixel from the scene texture and multiply it with the tint colour (comes from a constant buffer defined in Common.hlsli)
-	//float3 colour = (SceneTexture.Sample(PointSample, (input.sceneUV + sin(gWiggle) / 100)).rgb) * oceanBlue;
 
-	// Haze is a combination of sine waves in x and y dimensions
+	// Waves to offset
 	float SinX = sin(input.areaUV.x * radians(1440.0f) + gUnderwaterTimer * 3.0f);
 	float SinY = sin(input.areaUV.y * radians(3600.0f) + gUnderwaterTimer * 3.7f);
 	
-	// Offset for scene texture UV based on haze effect
+	// Offset for scene texture UV
 	// Adjust size of UV offset based on the constant EffectStrength, the overall size of area being processed, and the alpha value calculated above
-	float2 hazeOffset = float2(SinY, SinX) * effectStrength * gArea2DSize;
+	float2 waterOffset = float2(SinY, SinX) * effectStrength * gArea2DSize;
 
-	// Get pixel from scene texture, offset using haze
-	float3 colour = SceneTexture.Sample(PointSample, input.sceneUV + hazeOffset).rgb * oceanBlue;
+	// Get pixel from scene texture and tint blue
+	float3 colour = SceneTexture.Sample(PointSample, input.sceneUV + waterOffset).rgb * oceanBlue;
 	
 	// Got the RGB from the scene texture, set alpha to 1 for final output
 	return float4(colour, 1.0f);
