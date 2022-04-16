@@ -58,6 +58,7 @@ float3 HSLtoRGB(in float3 HSL)
 // Post-processing shader that tints the scene texture to a given colour
 float4 main(PostProcessingInput input) : SV_Target
 {
+	// Colour declarations
 	float3 gradientColour = { 0, 0, 0 };
 	float3 blue = {0,0,1};
 	float3 yellow = {1,1,0};
@@ -74,6 +75,7 @@ float4 main(PostProcessingInput input) : SV_Target
 	blue = HSLtoRGB(blueHSL);
 	yellow = HSLtoRGB(yellowHSL);
 	
+	// Lerp between two colours using uv y value
 	gradientColour = lerp(blue, yellow, input.areaUV.y);
 	
 	// Sample a pixel from the scene texture and multiply it with the tint colour (comes from a constant buffer defined in Common.hlsli)

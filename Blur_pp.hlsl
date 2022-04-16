@@ -24,7 +24,7 @@ SamplerState PointSample  : register(s0); // We don't usually want to filter (bi
 float4 main(PostProcessingInput input) : SV_Target
 {
 
-	// Sample a pixel from the scene texture and multiply it with the tint colour (comes from a constant buffer defined in Common.hlsli)
+	// Sample a pixel from the scene texture
 	float3 colour = (SceneTexture.Sample(PointSample, input.sceneUV).rgb) * 0.6;
 	colour += (SceneTexture.Sample(PointSample, (input.sceneUV + 0.01)).rgb) * 0.2;
 

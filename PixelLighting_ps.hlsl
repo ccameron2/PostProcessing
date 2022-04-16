@@ -26,6 +26,7 @@ SamplerState TexSampler      : register(s0); // A sampler is a filter for a text
 // This shader just samples a diffuse texture map
 float4 main(LightingPixelShaderInput input) : SV_Target
 {
+    
     // Normal might have been scaled by model scaling or interpolation so renormalise
     input.worldNormal = normalize(input.worldNormal); 
 
@@ -71,6 +72,20 @@ float4 main(LightingPixelShaderInput input) : SV_Target
 
     // Combine lighting with texture colours
     float3 finalColour = diffuseLight * diffuseMaterialColour + specularLight * specularMaterialColour;
+    
+    //// Extract bright parts of the map to blur
+	//float brightness = dot(finalColour, float3(0.6126, 0.8152, 0.4222));
+    
+	//if (brightness > 1.0f)
+	//{
+	//	output.bloom = float4(finalColour.rgb, 1.0f);
+	//}
+	//else
+	//{
+	//	output.bloom = float4(0, 0, 0, 1.0f);
+	//}
+    
+	//output.colour = float4(finalColour, 1.0f);
 
-    return float4(finalColour, 1.0f); // Always use 1.0f for output alpha - no alpha blending in this lab
+	return float4(finalColour, 1.0f);
 }

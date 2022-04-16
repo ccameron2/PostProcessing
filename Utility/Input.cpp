@@ -15,8 +15,6 @@ KeyState gKeyStates[NumKeyCodes];
 // Current position of mouse
 int gMouseX, gMouseY;
 
-
-
 //////////////////////////////////
 // Initialisation
 

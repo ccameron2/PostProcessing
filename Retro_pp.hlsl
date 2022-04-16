@@ -29,7 +29,7 @@ float4 main(PostProcessingInput input) : SV_Target
 	// Scale the UV coordinates into range 0->PixelNumber, round, then scale back into range 0->1
 	inputUV = floor(inputUV * gPixelNumber) / gPixelNumber;
 	
-	// Sample a pixel from the scene texture and multiply it with the tint colour (comes from a constant buffer defined in Common.hlsli)
+	// Sample a pixel from the scene texture
 	float3 colour = SceneTexture.Sample(PointSample, inputUV).rgb;
 	
 	// Scale colour into range 0->ColourNumber, round, then scale back into range 0->1;

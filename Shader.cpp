@@ -37,7 +37,9 @@ ID3D11PixelShader*  gHeatHazePostProcess    = nullptr;
 ID3D11PixelShader*  gRetroPostProcess	    = nullptr;
 ID3D11PixelShader* gGaussianVertPostProcess = nullptr;
 ID3D11PixelShader* gGaussianHoriPostProcess = nullptr;
-
+ID3D11PixelShader* gInvertPostProcess		= nullptr;
+ID3D11PixelShader* gBloomPostProcess = nullptr;
+ID3D11PixelShader* gBloomTexturePostProcess = nullptr;
 
 
 
@@ -60,18 +62,21 @@ bool LoadShaders()
 	//***************************************
 	//**** Post processing shaders
 
-	g2DPolygonVertexShader = LoadVertexShader("2DPolygon_pp");
-	g2DQuadVertexShader    = LoadVertexShader("2DQuad_pp");
-	gCopyPostProcess       = LoadPixelShader ("Copy_pp");
-	gGradPostProcess       = LoadPixelShader ("ColourGradient_pp");
-	gBlurPostProcess	   = LoadPixelShader ("Blur_pp");
-	gUnderwaterPostProcess = LoadPixelShader ("Underwater_pp");
-	gDistortPostProcess    = LoadPixelShader ("Distort_pp");
-	gSpiralPostProcess     = LoadPixelShader ("Spiral_pp");
-	gHeatHazePostProcess   = LoadPixelShader ("HeatHaze_pp");
-	gRetroPostProcess	   = LoadPixelShader("Retro_pp");
+	g2DPolygonVertexShader	 = LoadVertexShader("2DPolygon_pp");
+	g2DQuadVertexShader		 = LoadVertexShader("2DQuad_pp");
+	gCopyPostProcess		 = LoadPixelShader ("Copy_pp");
+	gGradPostProcess		 = LoadPixelShader ("ColourGradient_pp");
+	gBlurPostProcess		 = LoadPixelShader ("Blur_pp");
+	gUnderwaterPostProcess	 = LoadPixelShader ("Underwater_pp");
+	gDistortPostProcess		 = LoadPixelShader ("Distort_pp");
+	gSpiralPostProcess		 = LoadPixelShader ("Spiral_pp");
+	gHeatHazePostProcess	 = LoadPixelShader ("HeatHaze_pp");
+	gRetroPostProcess		 = LoadPixelShader("Retro_pp");
 	gGaussianVertPostProcess = LoadPixelShader("GaussVert_pp");
 	gGaussianHoriPostProcess = LoadPixelShader("GaussHori_pp");
+	gInvertPostProcess		 = LoadPixelShader("Invert_pp");
+	gBloomPostProcess		 = LoadPixelShader("Bloom_pp");
+	gBloomTexturePostProcess = LoadPixelShader("BloomTexture_pp");
 
 	if (gBasicTransformVertexShader == nullptr || gPixelLightingVertexShader == nullptr ||
 		gTintedTexturePixelShader   == nullptr || gPixelLightingPixelShader  == nullptr ||
@@ -80,7 +85,9 @@ bool LoadShaders()
 		gBlurPostProcess			== nullptr || gUnderwaterPostProcess     == nullptr ||
 		gDistortPostProcess         == nullptr || gSpiralPostProcess         == nullptr ||
 		g2DPolygonVertexShader      == nullptr || gRetroPostProcess			 == nullptr ||
-		gGaussianVertPostProcess    == nullptr || gGaussianHoriPostProcess   == nullptr
+		gGaussianVertPostProcess    == nullptr || gGaussianHoriPostProcess   == nullptr ||
+		gInvertPostProcess			== nullptr || gBloomPostProcess			 == nullptr ||
+		gBloomTexturePostProcess == nullptr
 		)
 	{
 		gLastError = "Error loading shaders";
@@ -109,6 +116,9 @@ void ReleaseShaders()
 	if (gBasicTransformVertexShader)  gBasicTransformVertexShader->Release();
 	if (gGaussianVertPostProcess)     gGaussianVertPostProcess->Release();
 	if (gGaussianHoriPostProcess)     gGaussianHoriPostProcess->Release();
+	if (gInvertPostProcess)			  gInvertPostProcess->Release();
+	if (gBloomPostProcess)			  gBloomPostProcess->Release();
+	if (gBloomTexturePostProcess)	  gBloomTexturePostProcess->Release();
 }
 
 

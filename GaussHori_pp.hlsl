@@ -30,11 +30,14 @@ float guassianFunction(float x, float sigma)
 // Post-processing shader that tints the scene texture to a given colour
 float4 main (PostProcessingInput input) : SV_Target
 {
+	// Offsets and weights
 	const float offset[] = { 0.0, 1.0, 2.0, 3.0, 4.0 };
 	const float weight[] = {0.2270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162};	
 
+	// Sample texture colour at first weight 
 	float3 colour = SceneTexture.Sample(PointSample, input.sceneUV / gViewportWidth) * weight[0];
 
+	// Sample pixels around current pixel at decreasing weights and increasing offsets and add to original colour
 	for (int i = 1; i < 5; i++)
 	{
 		colour += SceneTexture.Sample(PointSample, (input.sceneUV + float2(offset[i], 0) / gViewportWidth)) * weight[i];

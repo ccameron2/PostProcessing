@@ -60,6 +60,12 @@ struct PostProcessingInput
 //**************************
 
 
+struct PixelShaderOutput
+{
+	float4 colour : SV_Target0;
+	float4 bloom : SV_Target1;
+};
+
 
 //--------------------------------------------------------------------------------------
 // Constant Buffers
@@ -166,6 +172,7 @@ cbuffer PostProcessingConstants : register(b1)
 	float gUnderwaterTimer;
 	float3 paddingJ;
     
+    // Timer to change hue
 	float gColourTimer;
 	float3 paddingK;
 }

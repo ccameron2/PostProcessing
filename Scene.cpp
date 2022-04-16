@@ -43,6 +43,9 @@ enum class PostProcess
 	Distort,
 	Spiral,
 	HeatHaze,
+	Invert,
+	Bloom,
+	BloomTexture
 };
 
 enum class PostProcessMode
@@ -166,6 +169,18 @@ ID3D11Texture2D* gSceneTexture2 = nullptr; // This object represents the memory 
 ID3D11RenderTargetView* gSceneRenderTarget2 = nullptr; // This object is used when we want to render to the texture above
 ID3D11ShaderResourceView* gSceneTexture2SRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
 
+// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
+ID3D11Texture2D* gBloomTexture = nullptr; // This object represents the memory used by the texture on the GPU
+ID3D11RenderTargetView* gBloomRenderTarget = nullptr; // This object is used when we want to render to the texture above
+ID3D11ShaderResourceView* gBloomTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+
+// This texture will have the bright parts of the scene renderered on it. Then the texture is then used for bloom
+ID3D11Texture2D* gBloomBlurTexture = nullptr; // This object represents the memory used by the texture on the GPU
+ID3D11RenderTargetView* gBloomBlurRenderTarget = nullptr; // This object is used when we want to render to the texture above
+ID3D11ShaderResourceView* gBloomBlurTextureSRV = nullptr; // This object is used to give shaders access to the texture above (SRV = shader resource view)
+
+ID3D11RenderTargetView* gRenderViews[2];
+
 // Additional textures used for specific post-processes
 ID3D11Resource*           gNoiseMap = nullptr;
 ID3D11ShaderResourceView* gNoiseMapSRV = nullptr;
@@ -288,6 +303,16 @@ bool InitGeometry()
 		gLastError = "Error creating scene texture";
 		return false;
 	}
+	if (FAILED(gD3DDevice->CreateTexture2D(&sceneTextureDesc, NULL, &gBloomTexture)))
+	{
+		gLastError = "Error creating scene texture";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateTexture2D(&sceneTextureDesc, NULL, &gBloomBlurTexture)))
+	{
+		gLastError = "Error creating scene texture";
+		return false;
+	}
 
 
 
@@ -300,6 +325,18 @@ bool InitGeometry()
 	}
 
 	if (FAILED(gD3DDevice->CreateRenderTargetView(gSceneTexture2, NULL, &gSceneRenderTarget2)))
+	{
+		gLastError = "Error creating scene render target view";
+		return false;
+	}
+
+	if (FAILED(gD3DDevice->CreateRenderTargetView(gBloomTexture, NULL, &gBloomRenderTarget)))
+	{
+		gLastError = "Error creating scene render target view";
+		return false;
+	}
+
+	if (FAILED(gD3DDevice->CreateRenderTargetView(gBloomBlurTexture, NULL, &gBloomBlurRenderTarget)))
 	{
 		gLastError = "Error creating scene render target view";
 		return false;
@@ -322,6 +359,19 @@ bool InitGeometry()
 		gLastError = "Error creating scene shader resource view";
 		return false;
 	}
+	if (FAILED(gD3DDevice->CreateShaderResourceView(gBloomTexture, &srDesc, &gBloomTextureSRV)))
+	{
+		gLastError = "Error creating scene shader resource view";
+		return false;
+	}
+	if (FAILED(gD3DDevice->CreateShaderResourceView(gBloomBlurTexture, &srDesc, &gBloomBlurTextureSRV)))
+	{
+		gLastError = "Error creating scene shader resource view";
+		return false;
+	}
+
+	gRenderViews[0] = gSceneRenderTarget;
+	gRenderViews[1] = gBloomRenderTarget;
 
 	return true;
 }
@@ -548,29 +598,26 @@ void SelectPostProcessShaderAndTextures(PostProcess postProcess)
 	else if (postProcess == PostProcess::BlurVert)
 	{
 		gD3DContext->PSSetShader(gGaussianVertPostProcess, nullptr, 0);
-
-		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
 	}
 
 	else if (postProcess == PostProcess::Blur)
 	{
 		gD3DContext->PSSetShader(gBlurPostProcess, nullptr, 0);
+	}
 
-		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
+	else if (postProcess == PostProcess::Invert)
+	{
+		gD3DContext->PSSetShader(gInvertPostProcess, nullptr, 0);
 	}
 
 	else if (postProcess == PostProcess::BlurHori)
 	{
 		gD3DContext->PSSetShader(gGaussianHoriPostProcess, nullptr, 0);
-
-		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
 	}
 
 	else if (postProcess == PostProcess::UnderWater)
 	{
 		gD3DContext->PSSetShader(gUnderwaterPostProcess, nullptr, 0);
-
-		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
 	}
 
 	else if (postProcess == PostProcess::Distort)
@@ -595,6 +642,17 @@ void SelectPostProcessShaderAndTextures(PostProcess postProcess)
 	else if (postProcess == PostProcess::Retro)
 	{
 		gD3DContext->PSSetShader(gRetroPostProcess, nullptr, 0);
+	}
+
+	else if (postProcess == PostProcess::Bloom)
+	{
+		gD3DContext->PSSetShader(gBloomPostProcess, nullptr, 0);
+		gD3DContext->PSSetShaderResources(1, 1, &gBloomTextureSRV);
+		gD3DContext->PSSetSamplers(1, 1, &gTrilinearSampler);
+	}
+	else if (postProcess == PostProcess::BloomTexture)
+	{
+		gD3DContext->PSSetShader(gBloomTexturePostProcess, nullptr, 0);
 	}
 }
 
@@ -813,7 +871,7 @@ void RenderScene()
 	PolyPostProcess(Points1, PostProcess::Gradient, gSceneRenderTarget2, gSceneTextureSRV);
 
 	const std::array<CVector3, 4> Points2 = { { { -1, 5, 0 }, {-1,-5,0}, {-7,5,0}, {-7,-5,0} } };
-	PolyPostProcess(Points2, PostProcess::HeatHaze, gSceneRenderTarget, gSceneTexture2SRV);
+	PolyPostProcess(Points2, PostProcess::Invert, gSceneRenderTarget, gSceneTexture2SRV);
 
 	const std::array<CVector3, 4> Points3 = { { { 0, 5, 0 }, {0,-5,0}, {7,5,0}, {7,-5,0} } };
 	PolyPostProcess(Points3, PostProcess::UnderWater, gSceneRenderTarget2, gSceneTextureSRV);
@@ -837,6 +895,14 @@ void RenderScene()
 					gD3DContext->PSSetShaderResources(0, 1, &nullSRV);
 
 					gCurrentPostProcess = gCurrentPostProcessList[i];
+
+					if (gCurrentPostProcess == PostProcess::Bloom)
+					{
+						FullScreenPostProcess(PostProcess::BloomTexture, gBloomRenderTarget, gSceneTextureSRV);
+						FullScreenPostProcess(PostProcess::BlurHori, gBloomBlurRenderTarget, gBloomTextureSRV);
+						FullScreenPostProcess(PostProcess::BlurVert, gBloomRenderTarget, gBloomBlurTextureSRV);
+						FullScreenPostProcess(PostProcess::Bloom, gBackBufferRenderTarget, gSceneTextureSRV);
+					}
 					if (i == listSize - 1)
 					{
 						if (listSize % 2 == 0)
@@ -893,17 +959,18 @@ void UpdateScene(float frameTime)
 	//***********
 
 	// Select post process on keys
-	if (KeyHit(Key_F1))  gCurrentPostProcessMode = PostProcessMode::Fullscreen;
-	if (KeyHit(Key_F2))  gCurrentPostProcessMode = PostProcessMode::Area;
-	if (KeyHit(Key_F3))  gCurrentPostProcessMode = PostProcessMode::Polygon;
+	
+	//if (KeyHit(Key_F1))  gCurrentPostProcessMode = PostProcessMode::Fullscreen;
+	//if (KeyHit(Key_F2))  gCurrentPostProcessMode = PostProcessMode::Area;
+	//if (KeyHit(Key_F3))  gCurrentPostProcessMode = PostProcessMode::Polygon;
 
 	if (KeyHit(Key_1))   gCurrentPostProcessList.push_back(PostProcess::Gradient);
 	if (KeyHit(Key_2)) { gCurrentPostProcessList.push_back(PostProcess::BlurHori); gCurrentPostProcessList.push_back(PostProcess::BlurVert); }
 	if (KeyHit(Key_3))   gCurrentPostProcessList.push_back(PostProcess::UnderWater);
 	if (KeyHit(Key_4))   gCurrentPostProcessList.push_back(PostProcess::Retro);
 	if (KeyHit(Key_5))   gCurrentPostProcessList.push_back(PostProcess::Spiral);
-	if (KeyHit(Key_6))   gCurrentPostProcessList.push_back(PostProcess::HeatHaze);
-	if (KeyHit(Key_9))   gCurrentPostProcessList.push_back(PostProcess::Copy);
+	if (KeyHit(Key_6))   gCurrentPostProcessList.push_back(PostProcess::Bloom);
+	if (KeyHit(Key_9))   gCurrentPostProcessList.push_back(PostProcess::Invert);
 	if (KeyHit(Key_0))   gCurrentPostProcessList.clear();
 	if (KeyHit(Key_7))	 zShift -= 1.0f;
 	if (KeyHit(Key_8))	 zShift += 1.0f;

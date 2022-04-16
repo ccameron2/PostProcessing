@@ -10,7 +10,10 @@
       <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\2DPolygon_pp.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\Bloom.cso</FullPath>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\BloomTexture_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\Bloom_pp.cso</FullPath>
     </ContentFile>
     <ContentFile>
       <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\Blur_pp.cso</FullPath>
@@ -41,6 +44,9 @@
     </ContentFile>
     <ContentFile>
       <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\HeatHaze_pp.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\Invert_pp.cso</FullPath>
     </ContentFile>
     <ContentFile>
       <FullPath>C:\Users\CCame\source\repos\GraphicsTwo\Retro_pp.cso</FullPath>
